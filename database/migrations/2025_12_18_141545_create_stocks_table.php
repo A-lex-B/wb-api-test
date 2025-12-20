@@ -14,25 +14,25 @@ return new class extends Migration
         Schema::create('stocks', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->timestamp('date');
-            $table->timestamp('last_change_date');
-            $table->string('supplier_article');
-            $table->string('tech_size');
+            $table->date('date');
+            $table->date('last_change_date')->nullable();
+            $table->string('supplier_article')->nullable();
+            $table->string('tech_size')->nullable();
             $table->bigInteger('barcode');
             $table->unsignedMediumInteger('quantity');
-            $table->boolean('is_supply');
-            $table->boolean('is_realization');
-            $table->unsignedMediumInteger('quantity_full');
+            $table->boolean('is_supply')->nullable();
+            $table->boolean('is_realization')->nullable();
+            $table->unsignedMediumInteger('quantity_full')->nullable();
             $table->string('warehouse_name');
-            $table->unsignedMediumInteger('in_way_to_client');
-            $table->unsignedMediumInteger('in_way_from_client');
-            $table->unsignedInteger('nm_id');
-            $table->string('subject');
-            $table->string('category');
-            $table->string('brand');
-            $table->integer('sc_code');
-            $table->string('price');
-            $table->unsignedTinyInteger('discount');
+            $table->unsignedMediumInteger('in_way_to_client')->nullable();
+            $table->unsignedMediumInteger('in_way_from_client')->nullable();
+            $table->integer('nm_id');
+            $table->string('subject')->nullable();
+            $table->string('category')->nullable();
+            $table->string('brand')->nullable();
+            $table->integer('sc_code')->nullable();
+            $table->string('price')->nullable();
+            $table->unsignedTinyInteger('discount')->nullable();
         });
     }
 

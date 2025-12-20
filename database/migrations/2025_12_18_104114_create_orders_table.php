@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->string('g_number');
-            $table->timestamp('date');
-            $table->timestamp('last_change_date');
+            $table->dateTime('date');
+            $table->date('last_change_date');
             $table->string('supplier_article');
             $table->string('tech_size');
             $table->bigInteger('barcode');
@@ -24,14 +24,14 @@ return new class extends Migration
             $table->unsignedTinyInteger('discount_percent');
             $table->string('warehouse_name');
             $table->string('oblast');
-            $table->foreignId('income_id')->constrained();
+            $table->unsignedInteger('income_id');
             $table->string('odid')->nullable();
-            $table->unsignedInteger('nm_id');
+            $table->integer('nm_id');
             $table->string('subject');
             $table->string('category');
             $table->string('brand');
             $table->boolean('is_cancel');
-            $table->timestamp('cancel_dt')->nullable();
+            $table->date('cancel_dt')->nullable();
         });
     }
 

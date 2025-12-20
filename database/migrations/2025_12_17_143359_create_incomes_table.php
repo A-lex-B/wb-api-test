@@ -16,16 +16,16 @@ return new class extends Migration
             $table->timestamps();
             $table->unsignedInteger('income_id');
             $table->string('number');
-            $table->timestamp('date');
-            $table->timestamp('last_change_date');
+            $table->date('date');
+            $table->date('last_change_date');
             $table->string('supplier_article');
             $table->string('tech_size');
             $table->bigInteger('barcode');
             $table->unsignedMediumInteger('quantity');
             $table->string('total_price');
-            $table->timestamp('date_close');
+            $table->date('date_close');
             $table->string('warehouse_name');
-            $table->unsignedInteger('nm_id');
+            $table->integer('nm_id');
         });
     }
 

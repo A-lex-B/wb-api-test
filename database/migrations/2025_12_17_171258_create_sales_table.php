@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->string('g_number');
-            $table->timestamp('date');
-            $table->timestamp('last_change_date');
+            $table->date('date');
+            $table->date('last_change_date');
             $table->string('supplier_article');
             $table->string('tech_size');
             $table->bigInteger('barcode');
@@ -29,14 +29,14 @@ return new class extends Migration
             $table->string('country_name');
             $table->string('oblast_okrug_name');
             $table->string('region_name');
-            $table->foreignId('income_id')->constrained();
+            $table->unsignedInteger('income_id');
             $table->string('sale_id');
             $table->string('odid')->nullable();
             $table->string('spp');
             $table->string('for_pay');
             $table->string('finished_price');
             $table->string('price_with_disc');
-            $table->unsignedInteger('nm_id');
+            $table->integer('nm_id');
             $table->string('subject');
             $table->string('category');
             $table->string('brand');
