@@ -14,24 +14,24 @@ return new class extends Migration
         Schema::create('stocks', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->date('date');
+            $table->date('date')->nullable();
             $table->date('last_change_date')->nullable();
-            $table->string('supplier_article')->nullable();
-            $table->string('tech_size')->nullable();
-            $table->bigInteger('barcode');
-            $table->unsignedMediumInteger('quantity');
+            $table->binary('supplier_article', 8, true)->nullable();
+            $table->binary('tech_size', 8, true)->nullable();
+            $table->unsignedBigInteger('barcode')->nullable();
+            $table->unsignedMediumInteger('quantity')->nullable();
             $table->boolean('is_supply')->nullable();
             $table->boolean('is_realization')->nullable();
             $table->unsignedMediumInteger('quantity_full')->nullable();
-            $table->string('warehouse_name');
+            $table->string('warehouse_name')->nullable();
             $table->unsignedMediumInteger('in_way_to_client')->nullable();
             $table->unsignedMediumInteger('in_way_from_client')->nullable();
-            $table->integer('nm_id');
-            $table->string('subject')->nullable();
-            $table->string('category')->nullable();
-            $table->string('brand')->nullable();
-            $table->integer('sc_code')->nullable();
-            $table->string('price')->nullable();
+            $table->unsignedInteger('nm_id')->nullable();
+            $table->binary('subject', 8, true)->nullable();
+            $table->binary('category', 8, true)->nullable();
+            $table->binary('brand', 8, true)->nullable();
+            $table->unsignedInteger('sc_code')->nullable();
+            $table->decimal('price')->nullable();
             $table->unsignedTinyInteger('discount')->nullable();
         });
     }

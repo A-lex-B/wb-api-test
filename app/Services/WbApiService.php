@@ -2,10 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\Income;
-use App\Models\Order;
-use App\Models\Sale;
-use App\Models\Stock;
+use App\Enums\ApiResource;
 use Carbon\Carbon;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\RequestException;
@@ -25,19 +22,22 @@ class WbApiService
         ]);
     }
 
-    protected function makeApiRequest( 
-        string $dateFrom, 
-        string $dateTo, 
-        int $page,
-        int $limit = 100
-    ): Response
+    protected function makeApiRequest(string $dateFrom, string $dateTo, ?int $page = null, ?int $limit = null): Response
     {
-        $response = $this->apiRequest->get('', [
-            'dateFrom' => $dateFrom,
-            'dateTo' => $dateTo,
-            'page' => $page,
-            'limit' => $limit,
-        ]);
+        if ($dateFrom) {
+            $query['dateFrom'] = $dateFrom;
+        }
+        if ($dateTo) {
+            $query['dateTo'] = $dateTo;
+        }
+        if (isset($page)) {
+            $query['page'] = $page;
+        }
+        if (isset($limit)) {
+            $query['limit'] = $limit;
+        }
+
+        $response = $this->apiRequest->get('', $query);
 
         if ($response->successful()) {
             return $response;
@@ -46,38 +46,40 @@ class WbApiService
         }
     }
 
-    protected function store(string $resource, ?Carbon $dateFrom = null, ?Carbon $dateTo = null, bool $processSingleDateRange = false): void
+    public function store(
+        ApiResource $resource, 
+        ?Carbon $dateFrom = null, 
+        ?Carbon $dateTo = null,
+        bool $processSingleDateRange = false,
+        bool $withoutDateTo = false
+    ): void
     {
-        $this->apiRequest->withUrlParameters(['resource' => $resource]);
+        $this->apiRequest->withUrlParameters(['resource' => $resource->value]);
+        $modelClass = $resource->getModelClass();
 
         if ($dateFrom === null) {
-            $dateFrom = now()->subYear()->addDay();
+            $dateFrom = now('+03:00')->subYearNoOverflow()->addDay();
         }
-
-        if ($dateTo === null) {
-            $dateTo = now();
-        }
-
         $dateFrom->startOfDay();
-        $dateTo->startOfDay();
-        $dateRange = (int) $dateFrom->diffInDays($dateTo);
+        
+        if ($processSingleDateRange && $withoutDateTo) {
+            $dateTo = null;
+        } elseif ($dateTo === null) {
+            $dateTo = now('+03:00');
+        }
+        
+        if (isset($dateTo)) {
+            $dateRange = (int) $dateFrom->diffInDays($dateTo);
+        }
+        
         $page = 1;
-
-        $modelClass = match ($resource) {
-            'incomes' => Income::class,
-            'sales' => Sale::class,
-            'orders' => Order::class,
-            'stocks' => Stock::class
-        };
         
         while (true) {
+            $dateFromString = $resource->formatDateFrom($dateFrom);
+            $dateToString = $dateTo ? $resource->formatDateTo($dateTo) : '';
+            
             while (true) {
-                $response = $this->makeApiRequest(
-                    $dateFrom->toDateString(), 
-                    $dateTo->toDateString(), 
-                    $page, 
-                    $this->limit
-                );
+                $response = $this->makeApiRequest($dateFromString, $dateToString, $page, $this->limit);
 
                 if (!data_get($response, 'meta.total')) break 2;
 
@@ -88,35 +90,15 @@ class WbApiService
                 $data->map(function($attributes) use ($modelClass) {
                     $modelClass::create($attributes);
                 });
-
+                
                 $page++;
             }
 
             if ($processSingleDateRange) break;
             
             $page = 1;
-            $dateTo = $dateTo->subDays($dateRange + 1);
             $dateFrom = $dateFrom->subDays($dateRange + 1);
+            $dateTo = $dateTo->endOfDay()->subDays($dateRange + 1);
         }
-    }
-
-    public function storeIncomes()
-    {
-        $this->store('incomes');
-    }
-
-    public function storeSales()
-    {
-        $this->store('sales');
-    }
-
-    public function storeOrders()
-    {
-        $this->store('orders');
-    }
-
-    public function storeStocks()
-    {
-        $this->store('stocks', now(), null, true);
     }
 }

@@ -14,18 +14,18 @@ return new class extends Migration
         Schema::create('incomes', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->unsignedInteger('income_id');
-            $table->string('number');
-            $table->date('date');
-            $table->date('last_change_date');
-            $table->string('supplier_article');
-            $table->string('tech_size');
-            $table->bigInteger('barcode');
-            $table->unsignedMediumInteger('quantity');
-            $table->string('total_price');
-            $table->date('date_close');
-            $table->string('warehouse_name');
-            $table->integer('nm_id');
+            $table->unsignedInteger('income_id')->nullable();
+            $table->unsignedInteger('number')->nullable();
+            $table->date('date')->nullable();
+            $table->date('last_change_date')->nullable();
+            $table->binary('supplier_article', 8, true)->nullable();
+            $table->binary('tech_size', 8, true)->nullable();
+            $table->unsignedBigInteger('barcode')->nullable();
+            $table->unsignedMediumInteger('quantity')->nullable();
+            $table->decimal('total_price', 11, 2)->nullable();
+            $table->date('date_close')->nullable();
+            $table->string('warehouse_name')->nullable();
+            $table->unsignedInteger('nm_id')->nullable();
         });
     }
 

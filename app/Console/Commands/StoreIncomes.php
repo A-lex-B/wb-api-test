@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Enums\ApiResource;
 use App\Services\WbApiService;
 use Illuminate\Console\Command;
 
@@ -27,7 +28,7 @@ class StoreIncomes extends Command
     public function handle(WbApiService $service)
     {
         $this->line('Обработка данных...');
-        $service->storeIncomes();
+        $service->store(ApiResource::Income);
         $this->line('Данные успешно сохранены!');
     }
 }
